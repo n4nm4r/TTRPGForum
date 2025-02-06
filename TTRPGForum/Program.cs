@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using TTRPGForum.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<TTRPGForumContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("TTRPGForumContext") ?? throw new InvalidOperationException("Connection string 'TTRPGForumContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

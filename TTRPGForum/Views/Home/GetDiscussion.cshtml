@@ -1,0 +1,45 @@
+﻿@model TTRPGForum.Models.Discussion
+
+
+@{
+    ViewData["Title"] = "Get Discussion";
+}
+
+
+<h1> GetDiscussion page</h1>
+
+<table class="table">
+    <tr>
+        <td>
+            @Html.DisplayNameFor(model => model.DiscussionId)
+        </td>
+        <td>
+            @Html.DisplayFor(model => model.DiscussionId)
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html..DisplayNameFor(model => model.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(model => model.Title)
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html.DisplayNameFor(model => model.CreateDate)
+
+        </td>
+        <td>
+            @Html.DisplayFor(model => model.CreateDate)
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html.DisplayNameFor(model => model.ImageFilename)
+        </td>
+        <td>
+            @Html.DisplayFor(model => model.ImageFilename)
+        </td>
+    </tr>
+</table>
