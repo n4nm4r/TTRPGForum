@@ -15,5 +15,6 @@ namespace TTRPGForum.Data
         }
 
         public DbSet<TTRPGForum.Models.Discussion> Discussion { get; set; } = default!;
+        public DbSet<TTRPGForum.Models.Comment> Comment { get; set; } = default!;
     }
 }
