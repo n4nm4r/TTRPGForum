@@ -7,16 +7,21 @@
 <h1> Home Page Display all discussion</h1>
 
 
-@foreach(var item in Model)
-{
-    <h2>@item.Title</h2>
-    <p> 
-        @item.ImageFilename <br />
-        @item.DiscussionId <br />
-        @item.Content <br />
-        @item.CreateDate <br/>
-        <a asp-controller="Home" asp-action="GetDiscussion" asp-route-itemid="@item.DiscussionId"> Got to Discussion</a> 
+<h1>Discussion Threads</h1>
 
-    
-    </p>
+@foreach (var discussion in Model)
+{
+    <div class="discussion-thread">
+        <img src="~/photos/@discussion.ImageFilename" alt="Thumbnail" style="width: 100px; height: 100px;" />
+        <h2>
+            <a asp-controller="Home" asp-action="GetDiscussion" asp-route-id="@discussion.DiscussionId">
+                @discussion.Title
+            </a>
+        </h2>
+        <p>
+            Comments: @discussion.Comments?.Count <br />
+            Created: @discussion.CreateDate.ToString("g")
+        </p>
+    </div>
+    <hr />
 }

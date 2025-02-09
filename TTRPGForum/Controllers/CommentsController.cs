@@ -28,7 +28,7 @@ namespace TTRPGForum.Controllers
                 return NotFound();
             }
 
-            ViewData["DiscussionId"] = new SelectList(_context.Discussion, "DiscussionId", "DiscussionId");
+            ViewData["DiscussionId"] = id;
             return View();
         }
 
@@ -41,9 +41,10 @@ namespace TTRPGForum.Controllers
         {
             if (ModelState.IsValid)
             {
+                comment.CreateDate = DateTime.Now;
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("GetDiscussion", "Discussions", new { id = comment.DiscussionId });
             }
             ViewData["DiscussionId"] = new SelectList(_context.Discussion, "DiscussionId", "DiscussionId", comment.DiscussionId);
             return View(comment);

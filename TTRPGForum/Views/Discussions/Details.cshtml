@@ -1,42 +1,65 @@
 ﻿@model TTRPGForum.Models.Discussion
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Discussion Details";
 }
 
-<h1>Details</h1>
+<h1>@Model.Title</h1>
 
 <div>
     <h4>Discussion</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Content)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Content)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageFilename)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageFilename)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreateDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreateDate)
-        </dd>
+        <dt class="col-sm-2">Discussion Title</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Title)</dd>
+
+        <dt class="col-sm-2">Content</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Content)</dd>
+
+        <dt class="col-sm-2">Image Filename</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.ImageFilename)</dd>
+
+        <dt class="col-sm-2">Created On</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.CreateDate)</dd>
     </dl>
 </div>
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.DiscussionId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.DiscussionId" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>
+
+<hr />
+
+<div>
+    <h2>Comments</h2>
+    @if (Model.Comments != null && Model.Comments.Any())
+    {
+        @foreach (var comment in Model.Comments)
+        {
+            <div class="mb-3 border p-3 rounded">
+                <p>@Html.Raw(Html.Encode(comment.Content))</p>
+                <p class="text-muted">
+                    <small>
+                        <i>Posted on @comment.CreateDate.ToString("g")</i>
+                    </small>
+                </p>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-muted">No comments yet. Be the first to comment!</p>
+    }
+
+    <!-- Add a new comment -->
+    <h3>Add a Comment</h3>
+    <form asp-controller="Comments" asp-action="Create" method="post">
+        <input type="hidden" name="DiscussionId" value="@Model.DiscussionId" />
+        <div class="form-group">
+            <label for="CommentContent">Write your comment:</label>
+            <textarea id="CommentContent" name="Content" class="form-control" rows="3" placeholder="Write your comment here..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
+    </form>
 </div>
