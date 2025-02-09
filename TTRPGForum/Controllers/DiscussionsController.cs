@@ -56,31 +56,34 @@ namespace TTRPGForum.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,ImageFile,CreateDate")] Discussion discussion)
         {
-            // Rename the uploaded file to a unique GUID filename
-            discussion.ImageFilename = Guid.NewGuid().ToString() + Path.GetExtension(discussion.ImageFile.FileName);
-
-
             if (ModelState.IsValid)
             {
                 discussion.CreateDate = DateTime.Now;
 
-                _context.Add(discussion);
-                await _context.SaveChangesAsync();
-
-                // Save the uploaded file after the photo is saved in the database.
+                // Check if an image was uploaded
                 if (discussion.ImageFile != null)
                 {
-                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "photos", discussion.ImageFilename);
+                    // Rename the uploaded file to a unique GUID filename
+                    discussion.ImageFilename = Guid.NewGuid().ToString() + Path.GetExtension(discussion.ImageFile.FileName);
+
+                    // Save the uploaded file
+                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", discussion.ImageFilename);
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
                         await discussion.ImageFile.CopyToAsync(fileStream);
                     }
                 }
+                else
+                {
+                    // Set placeholder image if no image was uploaded
+                    discussion.ImageFilename = "placeholder-image.jpg";
+                }
 
+                _context.Add(discussion);
+                await _context.SaveChangesAsync();
 
-
-
-                return RedirectToAction(nameof(Index));
+                // Redirect to the Home index page
+                return RedirectToAction("Index", "Home");
             }
             return View(discussion);
         }

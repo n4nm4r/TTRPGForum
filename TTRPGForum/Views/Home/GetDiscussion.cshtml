@@ -9,7 +9,7 @@
     @if (!string.IsNullOrEmpty(Model.ImageFilename))
     {
         <div class="text-center mb-4">
-            <img src="@Url.Content("/photos/" + Model.ImageFilename)" alt="@Model.Title" class="img-fluid rounded shadow-sm" style="max-height: 400px; object-fit: cover;">
+            <img src="@Url.Content("/images/" + Model.ImageFilename)" alt="@Model.Title" class="img-fluid rounded shadow-sm" style="max-height: 400px; object-fit: cover;">
         </div>
     }
 
@@ -28,7 +28,7 @@
 
     <!-- Action Buttons -->
     <div class="d-flex justify-content-center gap-3 mb-4">
-        <a asp-action="Edit" asp-route-id="@Model?.DiscussionId" class="btn btn-warning btn-lg">Edit</a>
+        @* <a asp-action="Edit" asp-route-id="@Model?.DiscussionId" class="btn btn-warning btn-lg">Edit</a> *@
         <a asp-action="Index" class="btn btn-secondary btn-lg">Back to List</a>
     </div>
 
@@ -43,7 +43,7 @@
                 @foreach (var comment in Model.Comments)
                 {
                     <div class="mb-3 border p-3 rounded shadow-sm bg-light">
-                        <p>@Html.Raw(Html.Encode(comment.Content))</p>
+                        <p class="comment-text">@Html.Raw(Html.Encode(comment.Content))</p>
                         <p class="text-muted">
                             <small><i>Posted on @comment.CreateDate.ToString("g")</i></small>
                         </p>
@@ -66,4 +66,8 @@
             <button type="submit" class="btn btn-primary mt-3">Post Comment</button>
         </form>
     </div>
+
+
+
+
 </div>

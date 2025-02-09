@@ -35,6 +35,7 @@ namespace TTRPGForum.Controllers
         // POST: Comments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Comments/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CommentId,Content,CreateDate,DiscussionId")] Comment comment)
@@ -44,11 +45,12 @@ namespace TTRPGForum.Controllers
                 comment.CreateDate = DateTime.Now;
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("GetDiscussion", "Discussions", new { id = comment.DiscussionId });
+                return RedirectToAction("GetDiscussion", "Home", new { id = comment.DiscussionId }); // Update the action name to "Details"
             }
             ViewData["DiscussionId"] = new SelectList(_context.Discussion, "DiscussionId", "DiscussionId", comment.DiscussionId);
             return View(comment);
         }
+
 
     }
 }

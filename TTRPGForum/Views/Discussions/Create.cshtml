@@ -4,37 +4,29 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Make your own Entry.</h1>
 
-<h4>Discussion</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6 offset-md-3">
         <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <div class="form-group mb-3">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Content" class="control-label"></label>
-                <input asp-for="Content" class="form-control" />
+                <textarea asp-for="Content" class="form-control" rows="5"></textarea>
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="ImageFile" class="control-label"></label>
                 <input asp-for="ImageFile" type="file" class="form-control" />
                 <span asp-validation-for="ImageFile" class="text-danger"></span>
             </div>
-
-            @* <div class="form-group"> *@
-            @*     <label asp-for="ImageFilename" class="control-label"></label> *@
-            @*     <input asp-for="ImageFilename" class="form-control" /> *@
-            @*     <span asp-validation-for="ImageFilename" class="text-danger"></span> *@
-            @* </div> *@
-            
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
@@ -42,9 +34,11 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" asp-controller="Home">Back to List</a>
 </div>
 
 @section Scripts {
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
 }
