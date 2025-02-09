@@ -45,7 +45,7 @@ namespace TTRPGForum.Controllers
                 comment.CreateDate = DateTime.Now;
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("GetDiscussion", "Home", new { id = comment.DiscussionId }); // Update the action name to "Details"
+                return RedirectToAction("GetDiscussion", "Home", new { id = comment.DiscussionId }); 
             }
             ViewData["DiscussionId"] = new SelectList(_context.Discussion, "DiscussionId", "DiscussionId", comment.DiscussionId);
             return View(comment);

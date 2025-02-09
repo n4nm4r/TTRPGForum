@@ -8,6 +8,8 @@
 
 <div class="container">
     <div class="row justify-content-center">
+
+        <!-- All the comments containers -->
         @foreach (var discussion in Model)
         {
             <div class="col-12 col-md-8 col-lg-6">
@@ -34,7 +36,7 @@
                 </div>
             </div>
         }
-
+        <!-- Create new Discussion button -->
         <div class="d-flex justify-content-center">
             <a asp-controller="Discussions" asp-action="Create" class="btn btn-primary">
                 New Discussion
