@@ -1,31 +1,28 @@
 ﻿@model TTRPGForum.Models.Comment
 
 @{
-    ViewData["Title"] = "Add comment";
+    ViewData["Title"] = "Add Comment";
 }
 
-<h1>Create</h1>
+<h1 class="mb-4">Add a Comment</h1>
 
-<h4>Comment</h4>
-<form asp-action="Create">
-    <div class="form-group">
-        <label asp-for="Content" class="control-label">Comment</label>
-        <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+<form asp-action="Create" method="post">
+    <input type="hidden" asp-for="DiscussionId" value="@ViewData["DiscussionId"]" />
+
+    <div class="form-group mb-3">
+       
+        <textarea asp-for="Content" class="form-control" rows="5" placeholder="Write your comment here..." required></textarea>
         <span asp-validation-for="Content" class="text-danger"></span>
     </div>
 
-    <!-- Hidden field for DiscussionId -->
-    <input type="hidden" value="@ViewBag.DiscussionId" name="DiscussionId" />
-
     <div class="form-group">
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-success">Post Comment</button>
+        <a asp-action="GetDiscussion" asp-controller="Home" asp-route-id="@ViewData["DiscussionId"]" class="btn btn-secondary ms-2">Back to Discussion</a>
     </div>
 </form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

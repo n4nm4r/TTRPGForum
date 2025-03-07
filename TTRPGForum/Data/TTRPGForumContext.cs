@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TTRPGForum.Models;
 
 namespace TTRPGForum.Data
 {
-    public class TTRPGForumContext : DbContext
+    public class TTRPGForumContext : IdentityDbContext
     {
         public TTRPGForumContext (DbContextOptions<TTRPGForumContext> options)
             : base(options)

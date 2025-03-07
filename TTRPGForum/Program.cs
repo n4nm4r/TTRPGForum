@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TTRPGForum.Data;
+using Microsoft.AspNetCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<TTRPGForumContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TTRPGForumContext") ?? throw new InvalidOperationException("Connection string 'TTRPGForumContext' not found.")));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<TTRPGForumContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -21,6 +24,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+
+//app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
@@ -30,5 +35,5 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-
+app.MapRazorPages().WithStaticAssets();
 app.Run();
