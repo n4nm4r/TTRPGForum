@@ -8,7 +8,8 @@ using TTRPGForum.Models;
 
 namespace TTRPGForum.Data
 {
-    public class TTRPGForumContext : IdentityDbContext
+    //Use custom application user
+    public class TTRPGForumContext : IdentityDbContext<ApplicationUser>
     {
         public TTRPGForumContext (DbContextOptions<TTRPGForumContext> options)
             : base(options)

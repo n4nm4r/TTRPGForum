@@ -4,62 +4,56 @@
     ViewData["Title"] = "Discussion Details";
 }
 
-<h1>@Model.Title</h1>
-
-<div>
-    <h4>Discussion</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">Discussion Title</dt>
-        <dd class="col-sm-10">@Html.DisplayFor(model => model.Title)</dd>
-
-        <dt class="col-sm-2">Content</dt>
-        <dd class="col-sm-10">@Html.DisplayFor(model => model.Content)</dd>
-
-        <dt class="col-sm-2">Image Filename</dt>
-        <dd class="col-sm-10">@Html.DisplayFor(model => model.ImageFilename)</dd>
-
-        <dt class="col-sm-2">Created On</dt>
-        <dd class="col-sm-10">@Html.DisplayFor(model => model.CreateDate)</dd>
-    </dl>
-</div>
-
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.DiscussionId" class="btn btn-warning">Edit</a>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</div>
-
-<hr />
-
-<div>
-    <h2>Comments</h2>
-    @if (Model.Comments != null && Model.Comments.Any())
+<div class="container mt-4">
+    @if (!string.IsNullOrEmpty(Model.ImageFilename))
     {
-        @foreach (var comment in Model.Comments)
-        {
-            <div class="mb-3 border p-3 rounded">
-                <p>@Html.Raw(Html.Encode(comment.Content))</p>
-                <p class="text-muted">
-                    <small>
-                        <i>Posted on @comment.CreateDate.ToString("g")</i>
-                    </small>
-                </p>
-            </div>
-        }
-    }
-    else
-    {
-        <p class="text-muted">No comments yet. Be the first to comment!</p>
-    }
-
-    <!-- Add a new comment -->
-    <h3>Add a Comment</h3>
-    <form asp-controller="Comments" asp-action="Create" method="post">
-        <input type="hidden" name="DiscussionId" value="@Model.DiscussionId" />
-        <div class="form-group">
-            <label for="CommentContent">Write your comment:</label>
-            <textarea id="CommentContent" name="Content" class="form-control" rows="3" placeholder="Write your comment here..." required></textarea>
+        <div class="text-center mb-4">
+            <img src="@Url.Content("/images/" + Model.ImageFilename)" alt="@Model.Title" class="img-fluid rounded shadow-sm" style="max-height: 400px; object-fit: cover;">
         </div>
-        <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
-    </form>
+    }
+
+    <!-- Title -->
+    <div class="text-center">
+        <h1 class="display-4">@Model.Title</h1>
+        <p class="text-muted">
+            <small>Posted on @Model.CreateDate.ToString("f")</small>
+        </p>
+    </div>
+
+    <!-- Content -->
+    <div class="d-flex justify-content-center my-4">
+        <p class="lead">@Html.Raw(Html.Encode(Model.Content))</p>
+    </div>
+
+    <!-- Comments -->
+    <div class="comments-section mt-4">
+        <h3>Comments</h3>
+        @if (Model.Comments != null && Model.Comments.Any())
+        {
+            <ul class="list-group">
+                @foreach (var comment in Model.Comments)
+                {
+                    <li class="list-group-item">
+                        <strong>@comment.ApplicationUser?.UserName</strong>: @Html.Raw(Html.Encode(comment.Content))
+                        <br />
+                        <small class="text-muted">@comment.CreateDate.ToString("f")</small>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No comments yet.</p>
+        }
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-center gap-3 mt-4">
+        <a asp-action="Edit" asp-route-id="@Model?.DiscussionId" class="btn btn-warning btn-lg">Edit</a>
+        <form asp-action="Delete" method="post" class="d-inline">
+            <input type="hidden" asp-for="DiscussionId" />
+            <button type="submit" class="btn btn-danger btn-lg">Delete Discussion</button>
+        </form>
+        <a asp-action="Index" class="btn btn-secondary btn-lg">Back to List</a>
+    </div>
 </div>

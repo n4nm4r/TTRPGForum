@@ -1,0 +1,58 @@
+﻿@model TTRPGForum.Models.ProfileViewModel
+
+@{
+    ViewData["Title"] = Model.User.Name + "'s Profile";
+}
+
+<h2>@Model.User.Name's Profile</h2>
+
+<p>Email: @Model.User.Email</p>
+<p>Location: @Model.User.Location</p>
+
+@if (!string.IsNullOrEmpty(Model.User.ImageFileName))
+{
+    <img src="@Url.Content("~/images/" + Model.User.ImageFileName)" alt="@Model.User.Name" class="img-thumbnail" />
+}
+else
+{
+    <img src="@Url.Content("~/images/placeholder-image.jpg")" alt="Placeholder Image" class="img-thumbnail" />
+}
+
+<!-- User Discussions Section -->
+<h3>@Model.User.Name's Discussions</h3>
+@if (Model.Discussions != null && Model.Discussions.Any())
+{
+    <div class="container">
+        <div class="row justify-content-center">
+            @foreach (var discussion in Model.Discussions)
+            {
+                <div class="col-12 col-md-8 col-lg-6">
+                    <div class="card mb-4 discussion-card">
+                        <div class="row no-gutters">
+                            <div class="col-auto">
+                                <img class="img-thumbnail discussion-thumbnail" src="~/images/@discussion.ImageFilename" alt="Thumbnail" />
+                            </div>
+                            <div class="col">
+                                <div class="card-body">
+                                    <h2 class="card-title">
+                                        <a asp-controller="Home" asp-action="GetDiscussion" asp-route-id="@discussion.DiscussionId">
+                                            @discussion.Title
+                                        </a>
+                                    </h2>
+                                    <p class="card-text">
+                                        Comments: @discussion.Comments?.Count <br />
+                                        Created: @discussion.CreateDate.ToString("MMMM dd, yyyy")
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <p class="text-muted">This user has not created any discussions yet.</p>
+}

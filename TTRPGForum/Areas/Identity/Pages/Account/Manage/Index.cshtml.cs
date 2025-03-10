@@ -9,17 +9,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using TTRPGForum.Data;
 
 namespace TTRPGForum.Areas.Identity.Pages.Account.Manage
 {
     public class IndexModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public IndexModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -55,12 +56,34 @@ namespace TTRPGForum.Areas.Identity.Pages.Account.Manage
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Phone]
-            [Display(Name = "Phone number")]
-            public string PhoneNumber { get; set; }
+            /// 
+
+            //Removed Phone #
+            //[Phone]
+            //[Display(Name = "Phone number")]
+            //public string PhoneNumber { get; set; }
+
+
+            //Changed default code start
+            [Required]
+            [DataType(DataType.Text)]
+            [Display(Name ="Name")]
+            public string Name { get; set; }
+
+
+            public string Location { get; set; }
+
+            [Display(Name = "Profile Image")]
+            public IFormFile ImageFile { get; set; }
+
+            public string ImageFileName { get; set; }
+
+
+
+            //Changed default code end
         }
 
-        private async Task LoadAsync(IdentityUser user)
+        private async Task LoadAsync(ApplicationUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
@@ -69,7 +92,10 @@ namespace TTRPGForum.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                Name=user.Name,
+                Location= user.Location,
+                ImageFileName = user.ImageFileName,
+
             };
         }
 
@@ -99,16 +125,45 @@ namespace TTRPGForum.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            if (Input.PhoneNumber != phoneNumber)
+            //var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            //if (Input.PhoneNumber != phoneNumber)
+            //{
+            //    var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
+            //    if (!setPhoneResult.Succeeded)
+            //    {
+            //        StatusMessage = "Unexpected error when trying to set phone number.";
+            //        return RedirectToPage();
+            //    }
+            //}
+
+            //Begin Appplication change
+
+            if (Input.Name != user.Name)
             {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
-                if (!setPhoneResult.Succeeded)
-                {
-                    StatusMessage = "Unexpected error when trying to set phone number.";
-                    return RedirectToPage();
-                }
+                user.Name = Input.Name;
             }
+
+            if (Input.Location != user.Location)
+            {
+                user.Location = Input.Location;
+            }
+
+            if (Input.ImageFile != null)
+            {
+                // Save the file to your server
+                var filePath = Path.Combine("wwwroot/images", Input.ImageFile.FileName);
+
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    await Input.ImageFile.CopyToAsync(stream);
+                }
+
+                user.ImageFileName = Input.ImageFile.FileName;
+            }
+
+            await _userManager.UpdateAsync(user);
+
+            //END Appplication change
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";

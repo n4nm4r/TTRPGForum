@@ -6,37 +6,35 @@
 
 <h1>Edit Thread</h1>
 
-
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="col-md-6">
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="DiscussionId" />
             <input type="hidden" asp-for="ImageFilename" />
             <input type="hidden" asp-for="CreateDate" />
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Content" class="control-label"></label>
                 <textarea asp-for="Content" class="form-control" rows="5"></textarea>
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
-            @* <div class="form-group"> *@
-            @*     <label asp-for="ImageFilename" class="control-label"></label> *@
-            @*     <input asp-for="ImageFilename" class="form-control" /> *@
-            @*     <span asp-validation-for="ImageFilename" class="text-danger"></span> *@
-            @* </div> *@
-            @* <div class="form-group"> *@
-            @*     <label asp-for="CreateDate" class="control-label"></label> *@
-            @*     <input asp-for="CreateDate" class="form-control" /> *@
-            @*     <span asp-validation-for="CreateDate" class="text-danger"></span> *@
-            @* </div> *@
-            <div class="control-label">
-                Created:@Model.CreateDate
+            <div class="form-group mb-3">
+                <label asp-for="ImageFile" class="control-label">Change Image</label>
+                <input asp-for="ImageFile" type="file" class="form-control" />
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <img src="@Url.Content("~/images/" + Model.ImageFilename)" alt="@Model.Title" width="100" height="100" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">Created</label>
+                <div>@Model.CreateDate</div>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -50,5 +48,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

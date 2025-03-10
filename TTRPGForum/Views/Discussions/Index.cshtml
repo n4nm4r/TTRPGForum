@@ -7,18 +7,20 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
 <table class="table">
     <thead>
         <tr>
+            <th>
+                Thumbnail
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Title)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Content)
             </th>
-            
             <th>
                 @Html.DisplayNameFor(model => model.CreateDate)
             </th>
@@ -26,25 +28,34 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Content)
-            </td>
-            
-            <td>
-                @Html.DisplayFor(modelItem => item.CreateDate)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.DiscussionId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.DiscussionId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.DiscussionId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <img src="@Url.Content("~/images/" + item.ImageFilename)" alt="@item.Title" width="100" height="100" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.Content) && item.Content.Length > 100)
+                    {
+                        @item.Content.Substring(0, 100) @:...
+                    }
+                    else
+                    {
+                        @item.Content
+                    }
+                </td>
+                <td>
+                    @item.CreateDate.ToString("MMMM dd, yyyy")
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.DiscussionId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.DiscussionId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.DiscussionId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
-

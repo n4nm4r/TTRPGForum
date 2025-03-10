@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using TTRPGForum.Data;
 
 namespace TTRPGForum.Models
 {
@@ -18,13 +19,19 @@ namespace TTRPGForum.Models
         
         public string ImageFilename {  get; set; } = string.Empty;
 
-        //Proprty for file upload
+        //Property for file upload
         [NotMapped]
         [Display(Name = "File name")]
         public IFormFile? ImageFile { get; set; } // nullable!!!
 
 
         public DateTime CreateDate { get; set; }
+
+
+        // Foreign key (AspNetUsers table)
+        public string ApplicationUserId { get; set; } = string.Empty;
+        // Navigation property
+        public ApplicationUser? ApplicationUser { get; set; } // nullable!!!
 
         //Navigation Property
         public List<Comment>? Comments { get; set; }

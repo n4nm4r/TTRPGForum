@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using System.Data;
+using TTRPGForum.Data;
 
 namespace TTRPGForum.Models
 {
@@ -18,5 +19,10 @@ namespace TTRPGForum.Models
 
         //Navigation Property
         public Discussion? Discussion { get; set; }
+
+        // Foreign key (AspNetUsers table)
+        public string ApplicationUserId { get; set; } = string.Empty;
+        // Navigation property
+        public ApplicationUser? ApplicationUser { get; set; } // nullable!!!
     }
 }

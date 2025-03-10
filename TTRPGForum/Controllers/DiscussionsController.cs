@@ -2,27 +2,36 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TTRPGForum.Data;
 using TTRPGForum.Models;
 
 namespace TTRPGForum.Controllers
 {
+    [Authorize]
     public class DiscussionsController : Controller
     {
         private readonly TTRPGForumContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public DiscussionsController(TTRPGForumContext context)
+        public DiscussionsController(TTRPGForumContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Discussions
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Discussion.ToListAsync());
+            var discussions = await _context.Discussion
+                .Include(d => d.ApplicationUser) // Include the ApplicationUser
+                .Where(m => m.ApplicationUserId == _userManager.GetUserId(User))
+                .ToListAsync();
+
+            return View(discussions);
         }
 
         // GET: Discussions/Details/5
@@ -33,11 +42,11 @@ namespace TTRPGForum.Controllers
                 return NotFound();
             }
 
-            var discussion = await _context.Discussion.Include("Comments")
+            var discussion = await _context.Discussion.Include(d => d.Comments)
                 .FirstOrDefaultAsync(m => m.DiscussionId == id);
-            if (discussion == null)
+            if (discussion == null || discussion.ApplicationUserId != _userManager.GetUserId(User))
             {
-                return NotFound();
+                return Forbid();
             }
 
             return View(discussion);
@@ -50,23 +59,25 @@ namespace TTRPGForum.Controllers
         }
 
         // POST: Discussions/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,ImageFile,CreateDate")] Discussion discussion)
         {
             if (ModelState.IsValid)
             {
-                discussion.CreateDate = DateTime.Now;
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
 
-                // Check if an image was uploaded
+                discussion.CreateDate = DateTime.Now;
+                discussion.ApplicationUserId = user.Id;
+                discussion.ApplicationUser = user; // Set the ApplicationUser
+
                 if (discussion.ImageFile != null)
                 {
-                    // Rename the uploaded file to a unique GUID filename
                     discussion.ImageFilename = Guid.NewGuid().ToString() + Path.GetExtension(discussion.ImageFile.FileName);
-
-                    // Save the uploaded file
                     string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", discussion.ImageFilename);
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
@@ -75,14 +86,12 @@ namespace TTRPGForum.Controllers
                 }
                 else
                 {
-                    // Set placeholder image if no image was uploaded
                     discussion.ImageFilename = "placeholder-image.jpg";
                 }
 
                 _context.Add(discussion);
                 await _context.SaveChangesAsync();
 
-                // Redirect to the Home index page
                 return RedirectToAction("Index", "Home");
             }
             return View(discussion);
@@ -96,17 +105,18 @@ namespace TTRPGForum.Controllers
                 return NotFound();
             }
 
-            var discussion = await _context.Discussion.FindAsync(id);
-            if (discussion == null)
+            var discussion = await _context.Discussion
+                .Where(m => m.ApplicationUserId == _userManager.GetUserId(User))
+                .Include("Comments")
+                .FirstOrDefaultAsync(m => m.DiscussionId == id);
+            if (discussion == null || discussion.ApplicationUserId != _userManager.GetUserId(User))
             {
-                return NotFound();
+                return Forbid();
             }
             return View(discussion);
         }
 
         // POST: Discussions/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("DiscussionId,Title,Content,ImageFilename,CreateDate")] Discussion discussion)
@@ -114,6 +124,11 @@ namespace TTRPGForum.Controllers
             if (id != discussion.DiscussionId)
             {
                 return NotFound();
+            }
+
+            if (discussion.ApplicationUserId != _userManager.GetUserId(User))
+            {
+                return Forbid();
             }
 
             if (ModelState.IsValid)
@@ -149,9 +164,9 @@ namespace TTRPGForum.Controllers
 
             var discussion = await _context.Discussion
                 .FirstOrDefaultAsync(m => m.DiscussionId == id);
-            if (discussion == null)
+            if (discussion == null || discussion.ApplicationUserId != _userManager.GetUserId(User))
             {
-                return NotFound();
+                return Forbid();
             }
 
             return View(discussion);
@@ -162,12 +177,14 @@ namespace TTRPGForum.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var discussion = await _context.Discussion.FindAsync(id);
-            if (discussion != null)
+            var discussion = await _context.Discussion
+                .FirstOrDefaultAsync(m => m.DiscussionId == id);
+            if (discussion == null || discussion.ApplicationUserId != _userManager.GetUserId(User))
             {
-                _context.Discussion.Remove(discussion);
+                return Forbid();
             }
 
+            _context.Discussion.Remove(discussion);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

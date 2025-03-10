@@ -5,34 +5,43 @@
 }
 
 <div class="container mt-4">
-   
     @if (!string.IsNullOrEmpty(Model.ImageFilename))
     {
         <div class="text-center mb-4">
-            <img src="@Url.Content("/images/" + Model.ImageFilename)" alt="@Model.Title" class="img-fluid rounded shadow-sm" style="max-height: 400px; object-fit: cover;">
+            <img src="@Url.Content("~/images/" + Model.ImageFilename)" alt="@Model.Title" class="img-fluid rounded shadow-sm" style="max-height: 400px; object-fit: cover;" />
         </div>
     }
 
-    <!-- Title -->
+    <!-- Title and Owner Info -->
     <div class="text-center">
         <h1 class="display-4">@Model.Title</h1>
         <p class="text-muted">
+            @{
+                var imagePath = string.IsNullOrEmpty(Model.ApplicationUser?.ImageFileName) ? "~/images/placeholder-image.jpg" : "~/images/" + Model.ApplicationUser.ImageFileName;
+            }
+            <img src="@Url.Content(imagePath)" alt="@Model.ApplicationUser?.Name" class="img-thumbnail mr-2" width="50" height="50" />
+            <a class="m-lg-4" asp-controller="Home" asp-action="UserProfile" asp-route-userId="@Model.ApplicationUserId">
+                Posted by: @Model.ApplicationUser?.Name
+            </a>
+            <br />
             <small>Posted on @Model.CreateDate.ToString("f")</small>
         </p>
     </div>
 
     <!-- Content -->
-    <div class="d-flex justify-content-centermy-4">
+    <div class="d-flex justify-content-center my-4">
         <p class="lead">@Html.Raw(Html.Encode(Model.Content))</p>
     </div>
 
     <!-- Action Buttons -->
     <div class="d-flex justify-content-center gap-3 mb-4">
-        @* <a asp-action="Edit" asp-route-id="@Model?.DiscussionId" class="btn btn-warning btn-lg">Edit</a> *@
         <a asp-action="Index" class="btn btn-secondary btn-lg">Back</a>
     </div>
 
     <hr />
+
+    <!-- Comments Section -->
+    
 
     <!-- Comments Section -->
     <div>
@@ -43,9 +52,20 @@
                 @foreach (var comment in Model.Comments)
                 {
                     <div class="mb-3 border p-3 rounded shadow-sm bg-light">
+                        <div class="d-flex align-items-center mb-2">
+                            @{
+                                var commentImagePath = string.IsNullOrEmpty(comment.ApplicationUser?.ImageFileName) ? "~/images/placeholder-image.jpg" : "~/images/" + comment.ApplicationUser.ImageFileName;
+                            }
+                            <img src="@Url.Content(commentImagePath)" alt="@comment.ApplicationUser?.Name" class="img-thumbnail mr-2 ml-3" width="50" height="50" />
+                            <strong>
+                                <a asp-controller="Home" asp-action="UserProfile" asp-route-userId="@comment.ApplicationUserId">
+                                    @comment.ApplicationUser?.Name
+                                </a>
+                            </strong>
+                        </div>
                         <p class="comment-text">@Html.Raw(Html.Encode(comment.Content))</p>
                         <p class="text-muted">
-                            <small><i>Posted on @comment.CreateDate.ToString("g")</i></small>
+                            <small><i>Posted on @comment.CreateDate.ToString("MMMM dd, yyyy")</i></small>
                         </p>
                     </div>
                 }
@@ -64,8 +84,4 @@
             </a>
         </div>
     </div>
-
-
-
-
 </div>

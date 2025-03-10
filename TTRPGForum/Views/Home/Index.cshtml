@@ -4,7 +4,7 @@
     ViewData["Title"] = "TTRPG FORUM";
 }
 
-<h1 class="text-center mb-5">Let's Talk About TableTop Roleplaying Games!'</h1>
+<h1 class="text-center mb-5">Let's Talk About TableTop Roleplaying Games!</h1>
 
 <div class="container">
     <div class="row justify-content-center">
@@ -26,10 +26,13 @@
                                     </a>
                                 </h2>
                                 <p class="card-text">
+                                    <a asp-controller="Home" asp-action="UserProfile" asp-route-userId="@discussion.ApplicationUserId">
+                                        Posted by: @discussion.ApplicationUser?.Name
+                                    </a>
+                                    <br />
                                     Comments: @discussion.Comments?.Count <br />
-                                    Created: @discussion.CreateDate.ToString("g")
+                                    Created: @discussion.CreateDate.ToString("MMMM dd, yyyy")
                                 </p>
-                               
                             </div>
                         </div>
                     </div>
